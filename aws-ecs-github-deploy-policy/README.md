@@ -29,8 +29,6 @@ module "github_deploy" {
 }
 ```
 
-`account_id` defaults to the AWS provider account; set it only when the GitHub OIDC provider and deploy role are in a different account. The role name defaults to `<repository-with-slashes-replaced>-<environment>-deploy`.
-
 Pass private ECR base-image repository ARNs in `base_image_arns`. The application repositories receive image push permissions, including `ecr:DescribeImages` for immutable SHA tag checks.
 
 Set `ecs_deployment` when the workflow performs an ECS rollout. It grants task-definition registration, service listing and updates, and `iam:PassRole` for the supplied task execution and task role ARNs.
