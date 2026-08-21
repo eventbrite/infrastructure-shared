@@ -69,7 +69,10 @@ locals {
       {
         Sid      = "PublishImageParameters"
         Effect   = "Allow"
-        Action   = "ssm:PutParameter"
+        Action   = [
+          "ssm:GetParameter",
+          "ssm:PutParameter",
+        ]
         Resource = var.image_parameter_arns
       },
     ],
