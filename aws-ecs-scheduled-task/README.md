@@ -4,7 +4,7 @@ Creates a shared Fargate task definition, an EventBridge Scheduler schedule grou
 
 ## Usage
 
-The ECS cluster, private subnets, and task security group are caller-owned. Private tasks need NAT or VPC endpoints for ECR, CloudWatch Logs, Secrets Manager, SSM, and Datadog intake. Datadog is enabled by default and requires the `datadog/api-key` Secrets Manager secret.
+The ECS cluster, private subnets, and task security group are caller-owned. Private tasks need NAT or VPC endpoints for ECR, CloudWatch Logs, Secrets Manager, SSM, and Datadog intake.
 
 ```hcl
 # Legacy Eventbrite account VPCs use these names.
