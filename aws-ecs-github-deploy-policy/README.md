@@ -35,24 +35,3 @@ module "github_deploy" {
   # extra_policy_statements = []
 }
 ```
-
-## Deployment
-
-When configured with `ecs_deployment`, the deploy role can update the SSM image parameter and roll out the new image directly to ECS:
-
-```sh
-aws ssm put-parameter \
-  --name "/ecs/<service>/<environment>/images/<container>" \
-  --value "$IMAGE_URI" \
-  --type String \
-  --overwrite
-
-aws ecs update-service \
-  --cluster "<cluster-name>" \
-  --service "<service-name>" \
-  --force-new-deployment
-
-aws ecs wait services-stable \
-  --cluster "<cluster-name>" \
-  --services "<service-name>"
-```

@@ -99,3 +99,17 @@ module "scheduled_task" {
   # existing_task_role_arn                       = aws_iam_role.task.arn
 }
 ```
+
+## Deployment
+
+To roll out a new image in CI, update the container's SSM image parameter:
+
+```sh
+aws ssm put-parameter \
+  --name "/ecs/<application-name>/<environment>/images/<container>" \
+  --value "$IMAGE_URI" \
+  --type String \
+  --overwrite
+```
+
+Subsequent scheduled task runs automatically launch using the new image.
