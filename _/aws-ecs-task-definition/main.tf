@@ -101,33 +101,32 @@ locals {
       container.cpu != null ? { cpu = container.cpu } : {},
       container.memory != null ? { memory = container.memory } : {},
       container.memory_reservation != null ? { memoryReservation = container.memory_reservation } : {},
-      var.datadog_enabled ? {
-        logConfiguration = {
-          logDriver = "awsfirelens"
-          options = {
-            Name           = "datadog"
-            Host           = "http-intake.logs.datadoghq.com"
-            TLS            = "on"
-            provider       = "ecs"
-            dd_service     = var.application_name
-            dd_source      = "eventbrite"
-            dd_tags        = "environment:${var.environment},service:${var.application_name}"
-            dd_message_key = "log"
-          }
-          secretOptions = [{
-            name      = "apikey"
-            valueFrom = local.datadog_secret_arn
-          }]
-        }
-        } : {
-        logConfiguration = {
-          logDriver = "awslogs"
-          options = {
-            "awslogs-group"         = aws_cloudwatch_log_group.task.name
-            "awslogs-region"        = var.region
-            "awslogs-stream-prefix" = "ecs"
-          }
-        }
+      {
+        logConfiguration = merge(
+          {
+            logDriver = var.datadog_enabled ? "awsfirelens" : "awslogs"
+            options = var.datadog_enabled ? tomap({
+              Name           = "datadog"
+              Host           = "http-intake.logs.datadoghq.com"
+              TLS            = "on"
+              provider       = "ecs"
+              dd_service     = var.application_name
+              dd_source      = "eventbrite"
+              dd_tags        = "environment:${var.environment},service:${var.application_name}"
+              dd_message_key = "log"
+              }) : tomap({
+              "awslogs-group"         = aws_cloudwatch_log_group.task.name
+              "awslogs-region"        = var.region
+              "awslogs-stream-prefix" = "ecs"
+            })
+          },
+          var.datadog_enabled ? {
+            secretOptions = [{
+              name      = "apikey"
+              valueFrom = local.datadog_secret_arn
+            }]
+          } : {},
+        )
       },
     )
   ]
