@@ -112,6 +112,8 @@ resource "aws_security_group" "service" {
 
 To roll out a new image in CI, update the container's SSM image parameter, trigger a new deployment on the service, and wait for stabilization:
 
+Deployment automation registers the new task-definition revision and updates the SSM parameter after a successful rollout. The task definition tracks the latest family revision, so subsequent Terraform plans retain the deployed image and task configuration.
+
 ```sh
 aws ssm put-parameter \
   --name "/ecs/<service>/<environment>/images/<container>" \

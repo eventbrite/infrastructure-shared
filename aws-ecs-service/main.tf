@@ -72,8 +72,7 @@ resource "aws_ecs_service" "this" {
 
   lifecycle {
     # ECS or the autoscaler owns the live count after the initial deployment.
-    # Deployment automation owns the live task revision.
-    ignore_changes = [desired_count, task_definition]
+    ignore_changes = [desired_count]
 
     precondition {
       condition     = (var.autoscaling == null) != (var.desired_count == null)

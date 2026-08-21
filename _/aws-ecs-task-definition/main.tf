@@ -300,7 +300,7 @@ resource "aws_iam_role_policy" "task" {
   role   = aws_iam_role.task[0].name
 }
 
-# Terraform owns task configuration and the bootstrap revision. Deployment automation updates SSM image values, registers image-only revisions, and updates services.
+# Terraform owns task configuration and follows the latest revision registered by deployment automation.
 resource "aws_ecs_task_definition" "this" {
   container_definitions    = "[${join(",", local.encoded_container_definitions)}]"
   cpu                      = tostring(var.cpu)
@@ -327,9 +327,4 @@ resource "aws_ecs_task_definition" "this" {
     cpu_architecture        = "X86_64"
   }
 
-  # Deployment automation registers image-only revisions after the bootstrap
-  # revision; Terraform must not replace the live revision on the next apply.
-  lifecycle {
-    ignore_changes = [container_definitions]
-  }
 }
