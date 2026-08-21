@@ -21,16 +21,17 @@ module "github_deploy" {
   image_parameter_arns = values(module.service.image_parameter_arns)
   repository           = "eventbrite/example"
 
+  # Optional private ECR base images used by the Docker build.
+  # base_image_arns = [data.aws_ecr_repository.base.arn]
+
+  # Include when the workflow performs an ECS rollout.
   ecs_deployment = {
     cluster_arn  = module.cluster.arn
     role_arns    = [module.service.execution_role_arn, module.service.task_role_arn]
     service_arns = [module.service.service_arn]
   }
+
+  # Extra statements should use the smallest required actions and resources.
+  # extra_policy_statements = []
 }
 ```
-
-Pass private ECR base-image repository ARNs in `base_image_arns`. The application repositories receive image push permissions, including `ecr:DescribeImages` for immutable SHA tag checks.
-
-Set `ecs_deployment` when the workflow performs an ECS rollout. It grants task-definition registration, service listing and updates, and `iam:PassRole` for the supplied task execution and task role ARNs.
-
-Use `extra_policy_statements` only for additional scoped permissions.
