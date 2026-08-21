@@ -5,7 +5,7 @@ variable "account_id" {
   nullable    = true
 
   validation {
-    condition     = var.account_id == null || can(regex("^[0-9]{12}$", var.account_id))
+    condition     = var.account_id == null ? true : can(regex("^[0-9]{12}$", var.account_id))
     error_message = "account_id must be a 12-digit AWS account ID."
   }
 }
@@ -37,7 +37,7 @@ variable "ecs_deployment" {
   nullable = true
 
   validation {
-    condition = var.ecs_deployment == null || (
+    condition = var.ecs_deployment == null ? true : (
       length(var.ecs_deployment.service_arns) > 0 &&
       length(var.ecs_deployment.role_arns) > 0
     )

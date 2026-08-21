@@ -5,7 +5,7 @@ variable "account_id" {
   nullable    = true
 
   validation {
-    condition     = var.account_id == null || can(regex("^[0-9]{12}$", var.account_id))
+    condition     = var.account_id == null ? true : can(regex("^[0-9]{12}$", var.account_id))
     error_message = "account_id must be a 12-digit AWS account ID."
   }
 }
@@ -25,7 +25,7 @@ variable "autoscaling" {
   nullable = true
 
   validation {
-    condition = var.autoscaling == null || (
+    condition = var.autoscaling == null ? true : (
       var.autoscaling.min_capacity >= 0 &&
       var.autoscaling.max_capacity >= var.autoscaling.min_capacity
     )
@@ -88,7 +88,7 @@ variable "containers" {
         for port in container.ports : (
           port.container_port >= 1 &&
           port.container_port <= 65535 &&
-          (port.host_port == null || (port.host_port >= 1 && port.host_port <= 65535)) &&
+          (port.host_port == null ? true : (port.host_port >= 1 && port.host_port <= 65535)) &&
           contains(["tcp", "udp"], lower(port.protocol))
         )
       ]
@@ -196,7 +196,7 @@ variable "desired_count" {
   nullable    = true
 
   validation {
-    condition     = var.desired_count == null || var.desired_count >= 0
+    condition     = var.desired_count == null ? true : var.desired_count >= 0
     error_message = "desired_count must be non-negative."
   }
 }
@@ -274,7 +274,7 @@ variable "health_check_grace_period_seconds" {
   nullable    = true
 
   validation {
-    condition     = var.health_check_grace_period_seconds == null || var.health_check_grace_period_seconds >= 0
+    condition     = var.health_check_grace_period_seconds == null ? true : var.health_check_grace_period_seconds >= 0
     error_message = "health_check_grace_period_seconds must be non-negative."
   }
 }

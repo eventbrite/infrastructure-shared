@@ -5,7 +5,7 @@ variable "account_id" {
   nullable    = true
 
   validation {
-    condition     = var.account_id == null || can(regex("^[0-9]{12}$", var.account_id))
+    condition     = var.account_id == null ? true : can(regex("^[0-9]{12}$", var.account_id))
     error_message = "account_id must be a 12-digit AWS account ID."
   }
 }
@@ -70,7 +70,7 @@ variable "containers" {
         for port in container.ports : (
           port.container_port >= 1 &&
           port.container_port <= 65535 &&
-          (port.host_port == null || (port.host_port >= 1 && port.host_port <= 65535)) &&
+          (port.host_port == null ? true : (port.host_port >= 1 && port.host_port <= 65535)) &&
           contains(["tcp", "udp"], lower(port.protocol))
         )
       ]
