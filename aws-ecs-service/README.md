@@ -107,3 +107,24 @@ resource "aws_security_group" "service" {
   }
 }
 ```
+
+## Deployment
+
+To roll out a new image in CI, update the container's SSM image parameter, trigger a new deployment on the service, and wait for stabilization:
+
+```sh
+aws ssm put-parameter \
+  --name "/ecs/<service>/<environment>/images/<container>" \
+  --value "$IMAGE_URI" \
+  --type String \
+  --overwrite
+
+aws ecs update-service \
+  --cluster "<cluster-name>" \
+  --service "<service-name>" \
+  --force-new-deployment
+
+aws ecs wait services-stable \
+  --cluster "<cluster-name>" \
+  --services "<service-name>"
+```

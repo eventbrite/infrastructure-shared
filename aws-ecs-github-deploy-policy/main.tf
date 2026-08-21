@@ -67,9 +67,9 @@ locals {
         Resource = var.ecr_repository_arns
       },
       {
-        Sid      = "PublishImageParameters"
-        Effect   = "Allow"
-        Action   = [
+        Sid    = "PublishImageParameters"
+        Effect = "Allow"
+        Action = [
           "ssm:GetParameter",
           "ssm:PutParameter",
         ]
