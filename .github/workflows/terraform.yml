@@ -1,0 +1,71 @@
+name: Terraform
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.tf"
+      - ".github/scripts/**"
+      - ".github/scripts/pyproject.toml"
+      - ".github/scripts/uv.lock"
+      - ".github/workflows/release.yml"
+      - ".github/workflows/terraform.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.5.7
+      - name: Check formatting
+        run: terraform fmt -check -recursive .
+
+  discover-modules:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.discover.outputs.modules }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Discover modules
+        id: discover
+        run: python3 .github/scripts/discover_modules.py
+
+  validate:
+    name: validate [${{ matrix.dir }}]
+    needs: discover-modules
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJSON(needs.discover-modules.outputs.modules) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.5.7
+      - name: Initialize
+        working-directory: ${{ matrix.dir }}
+        run: terraform init -backend=false -input=false
+      - name: Validate
+        working-directory: ${{ matrix.dir }}
+        run: terraform validate
+
+  release-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+      - name: Check release metadata
+        run: python3 .github/scripts/release_modules.py --check --base-ref "${{ github.event.pull_request.base.sha }}"

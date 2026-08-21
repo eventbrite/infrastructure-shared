@@ -1,0 +1,18 @@
+{
+  "languages": {
+    "Python": {
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "language_servers": ["!basedpyright", "!pylsp", "!pyright", "ruff", "ty"]
+    },
+    "Terraform": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "terraform",
+          "arguments": ["fmt", "-"]
+        }
+      }
+    }
+  }
+}
