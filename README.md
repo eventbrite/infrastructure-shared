@@ -9,6 +9,7 @@ Reusable Terraform modules for Eventbrite infrastructure.
 | [`aws-ecs-cluster`](./aws-ecs-cluster) | A minimal ECS cluster with Container Insights |
 | [`aws-ecs-service`](./aws-ecs-service) | A Fargate service, task definition, and CPU autoscaling |
 | [`aws-ecs-scheduled-task`](./aws-ecs-scheduled-task) | Fargate tasks launched by EventBridge Scheduler |
+| [`aws-ecs-github-deploy-policy`](./aws-ecs-github-deploy-policy) | GitHub OIDC permissions for image builds and optional ECS rollouts |
 
 Modules in the `_` folder are not versioned explicitly and are considered internal implementation details for other modules. It is a way to reuse code and enforce consistency without adding additional public modules.
 
