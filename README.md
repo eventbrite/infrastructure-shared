@@ -2,6 +2,14 @@
 
 Reusable Terraform modules for Eventbrite infrastructure.
 
+## Modules
+
+| Module | Purpose |
+| --- | --- |
+| [`aws-ecs-cluster`](./aws-ecs-cluster) | A minimal ECS cluster with Container Insights |
+
+Each public module is versioned independently with tags named after the module directory, for example `aws-ecs-cluster-0.1.0`.
+
 ## Contributing
 
 1. Change only the affected module and its private dependencies.
