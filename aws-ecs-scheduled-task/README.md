@@ -59,12 +59,22 @@ module "scheduled_task" {
   subnets            = data.aws_subnets.private.ids
   security_group_ids = [aws_security_group.task.id]
   task_cpu           = 256
-  task_memory        = 512
+  task_memory        = 1024
 
   # Application images are bootstrapped through SSM image parameters.
   containers = {
     job = {
-      bootstrap_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/job@sha256:..."
+      bootstrap_image    = "123456789012.dkr.ecr.us-east-1.amazonaws.com/job@sha256:..."
+      command            = ["python", "-m", "jobs"]
+      cpu                = 128
+      memory_reservation = 512
+      environment        = {
+        LOG_LEVEL = "INFO"
+      }
+      secrets            = [{
+        name       = "API_TOKEN"
+        value_from = "arn:aws:secretsmanager:us-east-1:123456789012:secret:example-job-api-token"
+      }]
     }
   }
 
