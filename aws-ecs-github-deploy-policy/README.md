@@ -9,12 +9,9 @@ The role is assumed through GitHub OIDC. Trust is restricted to one repository a
 The example assumes that the caller owns the ECR repository and that `aws-ecs-cluster` and `aws-ecs-service` provide the cluster, service, task roles, and image parameter ARNs.
 
 ```hcl
-data "aws_caller_identity" "current" {}
-
 module "github_deploy" {
   source = "../infrastructure-shared/aws-ecs-github-deploy-policy"
 
-  account_id           = data.aws_caller_identity.current.account_id
   ecr_repository_arns  = [aws_ecr_repository.application.arn]
   environment          = "production"
   image_parameter_arns = values(module.service.image_parameter_arns)
@@ -28,7 +25,7 @@ module "github_deploy" {
 }
 ```
 
-The role name defaults to `<repository-with-slashes-replaced>-<environment>-deploy`. Set `role_name` only when a caller-owned naming convention requires it. The module returns the role ARN for attaching to GitHub Actions configuration.
+The role name defaults to `<repository-with-slashes-replaced>-<environment>-deploy`. Set `role_name` only when a caller-owned naming convention requires it. The module returns the role ARN for attaching to GitHub Actions configuration. `account_id` defaults to the AWS provider account; set it only when the GitHub OIDC provider and deploy role are in a different account.
 
 The application ECR repositories receive authentication, push, pull, and `ecr:DescribeImages` permissions. `ecr:DescribeImages` allows a build workflow to skip an image whose immutable SHA tag already exists. Pass base-image repository ARNs in `base_image_arns` when the Docker build pulls private ECR base images. The module does not create or configure ECR repositories.
 

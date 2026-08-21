@@ -1,9 +1,11 @@
 variable "account_id" {
-  description = "AWS account ID containing the GitHub OIDC provider and deploy role."
+  description = "Optional AWS account ID containing the GitHub OIDC provider and deploy role. The provider account is used when omitted."
   type        = string
+  default     = null
+  nullable    = true
 
   validation {
-    condition     = can(regex("^[0-9]{12}$", var.account_id))
+    condition     = var.account_id == null || can(regex("^[0-9]{12}$", var.account_id))
     error_message = "account_id must be a 12-digit AWS account ID."
   }
 }

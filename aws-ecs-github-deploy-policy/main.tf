@@ -1,4 +1,8 @@
+data "aws_caller_identity" "current" {}
+
 locals {
+  account_id = coalesce(var.account_id, data.aws_caller_identity.current.account_id)
+
   ecs_deployment_statements = flatten([
     for deployment in [var.ecs_deployment] : [
       {
@@ -100,7 +104,7 @@ resource "aws_iam_role" "this" {
     Statement = [{
       Effect = "Allow"
       Principal = {
-        Federated = "arn:aws:iam::${var.account_id}:oidc-provider/token.actions.githubusercontent.com"
+        Federated = "arn:aws:iam::${local.account_id}:oidc-provider/token.actions.githubusercontent.com"
       }
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
