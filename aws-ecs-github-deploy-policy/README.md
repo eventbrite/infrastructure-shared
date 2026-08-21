@@ -9,10 +9,14 @@ The role is assumed through GitHub OIDC. Trust is restricted to one repository a
 The GitHub OIDC provider, ECR repository, ECS resources, task roles, and SSM image parameters are caller-owned. The GitHub environment must match `environment`, and the workflow must request an OIDC token with audience `sts.amazonaws.com`.
 
 ```hcl
+data "aws_ecr_repository" "application" {
+  name = "example"
+}
+
 module "github_deploy" {
   source = "../infrastructure-shared/aws-ecs-github-deploy-policy"
 
-  ecr_repository_arns  = [aws_ecr_repository.application.arn]
+  ecr_repository_arns  = [data.aws_ecr_repository.application.arn]
   environment          = "production"
   image_parameter_arns = values(module.service.image_parameter_arns)
   repository           = "eventbrite/example"
